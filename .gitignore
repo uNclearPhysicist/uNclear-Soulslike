@@ -55,3 +55,6 @@ Session.vim
 
 # Starter Content
 /Content/StarterContent/**
+
+# Megascans
+/Content/Megascans/**
