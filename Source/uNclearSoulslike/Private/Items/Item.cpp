@@ -2,6 +2,9 @@
 
 
 #include "Items/Item.h"
+#include "DrawDebugHelpers.h"
+#include "uNclearSoulslike/uNclearSoulslike.h"
+
 
 // Sets default values
 AItem::AItem()
@@ -22,6 +25,10 @@ void AItem::BeginPlay()
 	{
 		GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Cyan, FString("Item OnScreen Message!"));
 	}
+	
+	UWorld* World = GetWorld();
+	FVector Location = GetActorLocation();
+	DRAW_SPHERE(Location)
 }
 
 // Called every frame
@@ -29,7 +36,7 @@ void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//UE_LOG(LogTemp, Warning, TEXT("DeltaTime: %f"), DeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("DeltaTime: %f"), DeltaTime)
 
 	if (GEngine)
 	{
@@ -37,7 +44,7 @@ void AItem::Tick(float DeltaTime)
 		FString Message = FString::Printf(TEXT("Item Name: %s"), *Name);
 		GEngine->AddOnScreenDebugMessage(2, 60.f, FColor::Cyan, Message);
 		
-		//UE_LOG(LogTemp, Warning, TEXT("Item Name: %s"), *Name);
+		//UE_LOG(LogTemp, Warning, TEXT("Item Name: %s"), *Name)
 	}
 
 }
