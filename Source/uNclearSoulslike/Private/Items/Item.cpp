@@ -2,8 +2,7 @@
 
 
 #include "Items/Item.h"
-#include "DrawDebugHelpers.h"
-#include "uNclearSoulslike/uNclearSoulslike.h"
+#include "uNclearSoulslike/DebugMacros.h"
 
 
 // Sets default values
