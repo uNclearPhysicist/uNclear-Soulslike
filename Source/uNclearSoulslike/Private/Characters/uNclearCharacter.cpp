@@ -2,6 +2,10 @@
 
 
 #include "Characters/uNclearCharacter.h"
+#include "Components/InputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
 
 // Sets default values
 AuNclearCharacter::AuNclearCharacter()
@@ -15,7 +19,27 @@ AuNclearCharacter::AuNclearCharacter()
 void AuNclearCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Add Input Mapping Context
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(uNclearCharacterContext, 0);
+		}
+	}
+}
+
+void AuNclearCharacter::Movement(const FInputActionValue& Value)
+{
+	const FVector2D MovementVector = Value.Get<FVector2D>();
+	if (GetController())
+	{
+		const FVector Forward = GetActorForwardVector();
+		AddMovementInput(Forward, MovementVector.Y);
+		const FVector Right = GetActorRightVector();
+		AddMovementInput(Right, MovementVector.X);
+	}
 }
 
 // Called every frame
@@ -30,5 +54,9 @@ void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::Movement);
+	}
 }
 

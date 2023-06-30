@@ -6,6 +6,10 @@
 #include "GameFramework/Character.h"
 #include "uNclearCharacter.generated.h"
 
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
+
 UCLASS()
 class UNCLEARSOULSLIKE_API AuNclearCharacter : public ACharacter
 {
@@ -24,6 +28,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* uNclearCharacterContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* MovementAction;
+
+	void Movement(const FInputActionValue& Value);
 
 //private:
 

@@ -66,32 +66,5 @@ Session.vim
 /Content/AnimalVarietyPack
 
 # Imported assets from ActionRPG
-/Content/Abilities/**
-/Content/Animations/**
-/Content/Assets/**
-/Content/Blueprints/BP_Character.uasset
-/Content/Blueprints/BP_EnemyCharacter.uasset
-/Content/Blueprints/BP_GameInstance.uasset
-/Content/Blueprints/BP_GameMode.uasset
-/Content/Blueprints/BP_GameState.uasset
-/Content/Blueprints/BP_PlayerCharacter.uasset
-/Content/Blueprints/BP_PlayerController.uasset
-/Content/Blueprints/BP_RPGFunctionLibrary.uasset
-/Content/Blueprints/BP_SoulItem.uasset
-/Content/Blueprints/BP_SpectatorPawn.uasset
-/Content/Blueprints/AI/**
-/Content/Blueprints/AnimNotifies/**
-/Content/Blueprints/Boss/**
-/Content/Blueprints/CameraShake/**
-/Content/Blueprints/NPC/**
-/Content/Blueprints/Progression/**
-/Content/Blueprints/SaveGame/**
-/Content/Blueprints/Weapon/**
-/Content/Blueprints/WidgetBP/**
-/Content/Characters/**
-/Content/Effects/**
-/Content/Enemy/**
-/Content/Environment/**
-/Content/Items/**
-/Content/UI/**
-/Content/Weapons/**
+/Content/ActionRPG/**
+/Content/Assets/Sounds/**
