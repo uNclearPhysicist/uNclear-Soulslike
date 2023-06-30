@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "uNclearCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -35,8 +37,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* MovementAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* LookingAction;
+
 	void Movement(const FInputActionValue& Value);
 
-//private:
+	void Looking(const FInputActionValue& Value);
+	
+private:
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SpringArm;
 
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* ViewCamera;
 };
