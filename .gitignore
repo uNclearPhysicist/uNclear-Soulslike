@@ -68,3 +68,6 @@ Session.vim
 # Imported assets from ActionRPG
 /Content/ActionRPG/**
 /Content/Assets/Sounds/**
+
+# Echo Content
+/Content/EchoContent/**
