@@ -41,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* LookingAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* JumpAction;
+
 	void Movement(const FInputActionValue& Value);
 
 	void Looking(const FInputActionValue& Value);

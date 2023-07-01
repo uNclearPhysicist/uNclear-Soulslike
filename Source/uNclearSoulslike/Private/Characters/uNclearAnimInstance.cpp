@@ -24,5 +24,6 @@ void UuNclearAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	if (uNclearCharacterMovement)
 	{
 		GroundSpeed = UKismetMathLibrary::VSizeXY(uNclearCharacterMovement->Velocity);
+		IsFalling = uNclearCharacterMovement->IsFalling();
 	}
 }
