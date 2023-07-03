@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
+class AItem;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -44,9 +45,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* JumpAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* EKeyAction;
+
 	void Movement(const FInputActionValue& Value);
 
 	void Looking(const FInputActionValue& Value);
+
+	void EKeyPressed();
 	
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -60,4 +66,10 @@ private:
     
     UPROPERTY(VisibleAnywhere, Category = Hair)
     UGroomComponent* Eyebrows;
+
+	UPROPERTY(VisibleInstanceOnly)
+	AItem* OverlappingItem;
+	
+public:
+	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 };

@@ -4,7 +4,7 @@
 #include "Items/Item.h"
 #include "uNclearSoulslike/DebugMacros.h"
 #include "Components/SphereComponent.h"
-
+#include "Characters/uNclearCharacter.h"
 
 // Sets default values
 AItem::AItem()
@@ -44,22 +44,22 @@ float AItem::TransformedCos()
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Get OtherActor name and print to screen in debug message
-	const FString OtherActorName = FString("Starting Overlap with: ") + OtherActor->GetName();
-	if (GEngine)
+	// Set this Item as the Overlapping Item for the uNclear Character
+	AuNclearCharacter* uNclearCharacter = Cast<AuNclearCharacter>(OtherActor);
+	if (uNclearCharacter)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Red, OtherActorName);
+		uNclearCharacter->SetOverlappingItem(this);
 	}
 }
 
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	// Get OtherActor name and print to screen in debug message
-	const FString OtherActorName = FString("Ending Overlap with: ") + OtherActor->GetName();
-	if (GEngine)
+	// Unset this Item as the Overlapping Item for the uNclear Character
+	AuNclearCharacter* uNclearCharacter = Cast<AuNclearCharacter>(OtherActor);
+	if (uNclearCharacter)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Blue, OtherActorName);
+		uNclearCharacter->SetOverlappingItem(nullptr);
 	}
 }
 
