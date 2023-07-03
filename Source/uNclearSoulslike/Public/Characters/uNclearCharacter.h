@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterTypes.h"
 #include "uNclearCharacter.generated.h"
 
 class USpringArmComponent;
@@ -69,7 +70,11 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
+
+	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 	
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
+
+	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 };
