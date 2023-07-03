@@ -71,3 +71,6 @@ Session.vim
 
 # Echo Content
 /Content/EchoContent/**
+
+# Mixamo
+/Content/Mixamo/**
