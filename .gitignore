@@ -74,3 +74,6 @@ Session.vim
 
 # Mixamo
 /Content/Mixamo/**
+
+# Human Vocalizations
+/Content/HumanVocalizations/**
