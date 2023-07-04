@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class UAnimMontage;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -49,11 +50,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* EKeyAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* AttackAction;
+
 	void Movement(const FInputActionValue& Value);
 
 	void Looking(const FInputActionValue& Value);
 
 	void EKeyPressed();
+
+	void Attack();
 	
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -72,6 +78,13 @@ private:
 	AItem* OverlappingItem;
 
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
+	/**
+	 * Animation Montages
+	 **/
+
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* AttackMontage;
 	
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
