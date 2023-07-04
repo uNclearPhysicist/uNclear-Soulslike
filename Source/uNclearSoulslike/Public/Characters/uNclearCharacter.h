@@ -12,6 +12,7 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
+class AWeapon;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -81,6 +82,12 @@ protected:
 	void AttackEnd();
 	
 	bool CanAttack();
+
+	void PlayEquipMontage(FName SectionName);
+	
+	bool CanDisarm();
+	
+	bool CanArm();
 	
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -103,12 +110,18 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EActionState ActionState = EActionState::EAS_Unoccupied;
 
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	AWeapon* EquippedWeapon;
+
 	/**
 	 * Animation Montages
 	 **/
 
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* AttackMontage;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* EquipMontage;
 	
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
