@@ -122,6 +122,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	AWeapon* EquippedWeapon;
 
+	EAttackComboState AttackComboState = EAttackComboState::EACS_1;
+
 	/**
 	 * Animation Montages
 	 **/

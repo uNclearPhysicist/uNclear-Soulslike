@@ -144,21 +144,21 @@ void AuNclearCharacter::PlayAttackMontage()
 	if (AnimInstance && AttackMontage)
 	{
 		AnimInstance->Montage_Play(AttackMontage);
-		const int32 Selection = FMath::RandRange(0, 2);
 		FName SectionName = FName();
-		switch (Selection)
+		if (AttackComboState == EAttackComboState::EACS_1)
 		{
-		case 0:
 			SectionName = FName("Attack1");
-			break;
-		case 1:
+			AttackComboState = EAttackComboState::EACS_2;
+		}
+		else if (AttackComboState == EAttackComboState::EACS_2)
+		{
 			SectionName = FName("Attack2");
-			break;
-		case 2:
+			AttackComboState = EAttackComboState::EACS_3;
+		}
+		else if (AttackComboState == EAttackComboState::EACS_3)
+		{
 			SectionName = FName("Attack3");
-			break;
-		default:
-			break;
+			AttackComboState = EAttackComboState::EACS_1;
 		}
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
