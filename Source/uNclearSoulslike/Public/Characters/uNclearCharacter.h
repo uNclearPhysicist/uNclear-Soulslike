@@ -35,6 +35,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/** 
+	* Enhanced Input Mapping Context & Actions
+	*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* uNclearCharacterContext;
 
@@ -53,13 +57,30 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* AttackAction;
 
+	/** 
+	* Callbacks for input
+	**/
+	
 	void Movement(const FInputActionValue& Value);
 
 	void Looking(const FInputActionValue& Value);
 
+	virtual void Jump() override;
+
 	void EKeyPressed();
 
 	void Attack();
+
+	/** 
+	* Play montage functions
+	**/
+	
+	void PlayAttackMontage();
+
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+	
+	bool CanAttack();
 	
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -78,6 +99,9 @@ private:
 	AItem* OverlappingItem;
 
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 	/**
 	 * Animation Montages
