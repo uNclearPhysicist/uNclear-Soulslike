@@ -176,7 +176,7 @@ bool AuNclearCharacter::CanAttack()
 		CharacterState != ECharacterState::ECS_Unequipped;
 }
 
-void AuNclearCharacter::PlayEquipMontage(FName SectionName)
+void AuNclearCharacter::PlayEquipMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && EquipMontage)
