@@ -4,6 +4,7 @@
 #include "Enemies/Enemy.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "uNclearSoulslike/DebugMacros.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -37,5 +38,10 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemy::GetHit(const FVector& ImpactPoint)
+{
+	DRAW_SPHERE_COLOUR(ImpactPoint, FColor::Orange);
 }
 
