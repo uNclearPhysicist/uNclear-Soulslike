@@ -21,6 +21,7 @@ public:
 	AWeapon();
 	void AttachMeshToSocket(USceneComponent* InParent, FName InSocketName);
 	void Equip(USceneComponent* InParent, FName InSocketName);
+	TArray<AActor*> IgnoreActors;
 protected:
 	virtual void BeginPlay() override;
     virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
