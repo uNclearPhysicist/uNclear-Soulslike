@@ -71,3 +71,19 @@ Session.vim
 
 # Echo Content
 /Content/EchoContent/**
+
+# Mixamo
+/Content/Mixamo/**
+
+# Human Vocalizations
+/Content/HumanVocalizations/**
+
+# Audio
+/Content/Audio/**
+
+# Effects
+/Content/Effects/**
+
+# Paragon: Minions
+/Content/ParagonMinions/**
+
