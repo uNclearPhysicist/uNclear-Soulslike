@@ -77,3 +77,10 @@ Session.vim
 
 # Human Vocalizations
 /Content/HumanVocalizations/**
+
+# Audio
+/Content/Audio/**
+
+# Effects
+/Content/Effects/**
+

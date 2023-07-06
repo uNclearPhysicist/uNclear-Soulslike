@@ -32,13 +32,16 @@ public:
 private:
 
 	/**
-	* Animation montages
+	* Hit effects (animation montage, sound, particles)
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* HitReactMontage;
 
 	UPROPERTY(EditAnywhere, Category = Sounds)
 	USoundBase* HitSound;
+
+	UPROPERTY(EditAnywhere, Category = VisualEffects)
+	UParticleSystem* HitParticles;
 
 protected:
 	// Called when the game starts or when spawned

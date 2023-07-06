@@ -54,15 +54,27 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
-	DRAW_SPHERE_COLOUR(ImpactPoint, FColor::Orange);
+	//DRAW_SPHERE_COLOUR(ImpactPoint, FColor::Orange);
 
+	// Play animation montage
 	DirectionalHitReact(ImpactPoint);
 
+	// Play hit sound
 	if (HitSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
 			this,
 			HitSound,
+			ImpactPoint
+		);
+	}
+	
+	// Play blood effect
+	if (HitParticles && GetWorld())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticles,
 			ImpactPoint
 		);
 	}
@@ -105,7 +117,7 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 
 	PlayHitReactMontage(Section);
 
-	// Debugging visual aids
+	/* Debugging visual aids
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, FString::Printf(TEXT("Theta: %f"), Theta));
@@ -113,5 +125,6 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + Forward * 60.f, 5.f, FColor::Red, 5.f);
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 5.f, FColor::Green, 5.f);
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100.f, 5.f, FColor::Blue, 5.f);
+	*/
 }
 
