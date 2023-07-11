@@ -10,7 +10,7 @@
 class UAnimMontage;
 class USoundBase;
 class UAttributeComponent;
-class UWidgetComponent;
+class UHealthBarComponent;
 
 UCLASS()
 class UNCLEARSOULSLIKE_API AEnemy : public ACharacter, public IHitInterface
@@ -46,7 +46,7 @@ private:
 	UAttributeComponent* Attributes;
 
 	UPROPERTY(VisibleAnywhere)
-	UWidgetComponent* HealthBarWidget;
+	UHealthBarComponent* HealthBarWidget;
 
 	/**
 	* Hit effects (animation montage, sound, particles)
