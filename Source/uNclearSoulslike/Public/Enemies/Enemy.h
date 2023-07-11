@@ -9,6 +9,7 @@
 
 class UAnimMontage;
 class USoundBase;
+class UAttributeComponent;
 
 UCLASS()
 class UNCLEARSOULSLIKE_API AEnemy : public ACharacter, public IHitInterface
@@ -29,7 +30,19 @@ public:
 
 	void DirectionalHitReact(const FVector& ImpactPoint);
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	/**
+	* Play montage functions
+	*/
+	void PlayHitReactMontage(const FName& SectionName);
+
 private:
+	
+	UPROPERTY(VisibleAnywhere)
+	UAttributeComponent* Attributes;
 
 	/**
 	* Hit effects (animation montage, sound, particles)
@@ -42,16 +55,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = VisualEffects)
 	UParticleSystem* HitParticles;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	/**
-	* Play montage functions
-	*/
-	void PlayHitReactMontage(const FName& SectionName);
-
-public:	
-
 };
