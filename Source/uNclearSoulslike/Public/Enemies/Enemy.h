@@ -37,6 +37,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void Die();
+
 	/**
 	* Play montage functions
 	*/
@@ -51,10 +53,13 @@ private:
 	UHealthBarComponent* HealthBarWidget;
 
 	/**
-	* Hit effects (animation montage, sound, particles)
+	* Hit effects (animation montages, sound, particles)
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* HitReactMontage;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* DeathMontage;
 
 	UPROPERTY(EditAnywhere, Category = Sounds)
 	USoundBase* HitSound;
