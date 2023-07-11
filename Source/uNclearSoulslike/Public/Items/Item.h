@@ -10,6 +10,7 @@ class USphereComponent;
 
 enum class EItemState : uint8
 {
+	EIS_Grounded,
 	EIS_Hovering,
 	EIS_Equipped
 };
@@ -57,6 +58,9 @@ protected:
 	
     UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* EmbersEffect;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

@@ -5,6 +5,7 @@
 #include "uNclearSoulslike/DebugMacros.h"
 #include "Components/SphereComponent.h"
 #include "Characters/uNclearCharacter.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AItem::AItem()
@@ -19,6 +20,10 @@ AItem::AItem()
 	// Sphere component
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	Sphere->SetupAttachment(GetRootComponent());
+
+	// Embers Effect Niagara component
+	EmbersEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Embers"));
+	EmbersEffect->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -72,6 +77,7 @@ void AItem::Tick(float DeltaTime)
 	if (ItemState == EItemState::EIS_Hovering)
 	{
 		AddActorWorldOffset(FVector(0.f, 0.f, TransformedSin()));
+		AddActorWorldRotation(FRotator(0.f,45.f*DeltaTime,0.f));
 	}
 }
 
