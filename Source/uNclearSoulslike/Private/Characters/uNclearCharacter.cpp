@@ -14,10 +14,8 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 
-// Sets default values
 AuNclearCharacter::AuNclearCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set up Spring Arm Component
@@ -50,7 +48,6 @@ AuNclearCharacter::AuNclearCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
 }
 
-// Called when the game starts or when spawned
 void AuNclearCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -143,34 +140,6 @@ void AuNclearCharacter::Attack()
 	}
 }
 
-void AuNclearCharacter::PlayAttackMontage()
-{
-	Super::PlayAttackMontage();
-	
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && AttackMontage)
-	{
-		AnimInstance->Montage_Play(AttackMontage);
-		FName SectionName = FName();
-		if (AttackComboState == EAttackComboState::EACS_1)
-		{
-			SectionName = FName("Attack1");
-			AttackComboState = EAttackComboState::EACS_2;
-		}
-		else if (AttackComboState == EAttackComboState::EACS_2)
-		{
-			SectionName = FName("Attack2");
-			AttackComboState = EAttackComboState::EACS_3;
-		}
-		else if (AttackComboState == EAttackComboState::EACS_3)
-		{
-			SectionName = FName("Attack3");
-			AttackComboState = EAttackComboState::EACS_1;
-		}
-		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
-	}
-}
-
 void AuNclearCharacter::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
@@ -226,14 +195,12 @@ void AuNclearCharacter::FinishEquipping()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
-// Called every frame
 void AuNclearCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

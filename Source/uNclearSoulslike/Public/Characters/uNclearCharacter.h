@@ -22,17 +22,13 @@ class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AuNclearCharacter();
 	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	/** 
@@ -74,8 +70,6 @@ protected:
 	/** 
 	* Play montage functions
 	**/
-
-	virtual void PlayAttackMontage() override;
 	
 	virtual void AttackEnd() override;
 	
