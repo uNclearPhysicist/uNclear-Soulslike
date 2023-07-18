@@ -12,6 +12,7 @@ class UAnimMontage;
 class USoundBase;
 class UAttributeComponent;
 class UHealthBarComponent;
+class UPawnSensingComponent;
 
 UCLASS()
 class UNCLEARSOULSLIKE_API AEnemy : public ACharacter, public IHitInterface
@@ -53,12 +54,19 @@ protected:
 	
 	AActor* ChoosePatrolTarget();
 
-	/**
+	UFUNCTION()
+	void PawnSeen(APawn* SeenPawn);
+
+	/*
 	* Play montage functions
 	*/
 	void PlayHitReactMontage(const FName& SectionName);
 
 private:
+
+	/*
+	* Components
+	*/
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UAttributeComponent* Attributes;
@@ -66,15 +74,18 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;
 
+	UPROPERTY(VisibleAnywhere)
+	UPawnSensingComponent* PawnSensing;
+
+	/*
+	* Navigation
+	*/
+	
 	UPROPERTY()
 	AActor* CombatTarget;
 
 	UPROPERTY(EditAnywhere)
 	double CombatRadius = 500.f;
-
-	/** 
-	* Navigation
-	*/
 
 	UPROPERTY()
 	class AAIController* EnemyController;
