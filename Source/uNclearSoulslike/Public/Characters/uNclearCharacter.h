@@ -22,18 +22,15 @@ class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter
 	GENERATED_BODY()
 
 public:
-	AuNclearCharacter();
 	
-	virtual void Tick(float DeltaTime) override;
-
+	AuNclearCharacter();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 protected:
+	
 	virtual void BeginPlay() override;
 
-	/** 
-	* Enhanced Input Mapping Context & Actions
-	*/
+	/** Enhanced Input Mapping Context & Actions */
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* uNclearCharacterContext;
@@ -53,44 +50,36 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* AttackAction;
 
-	/** 
-	* Callbacks for input
-	**/
-	
+	/** Callbacks for input */
 	void Movement(const FInputActionValue& Value);
-
 	void Looking(const FInputActionValue& Value);
-
 	virtual void Jump() override;
-
 	void EKeyPressed();
-
 	virtual void Attack() override;
 	
-	/** 
-	* Play montage functions
-	**/
-	
+	/** Combat */
+	void EquipWeapon(AWeapon* Weapon);
 	virtual void AttackEnd() override;
-	
 	virtual bool CanAttack() override;
-	
+	bool CanDisarm();
+	bool CanArm();
+	void Disarm();
+	void Arm();
 	void PlayEquipMontage(const FName& SectionName);
 	
-	bool CanDisarm();
-	
-	bool CanArm();
+	UFUNCTION(BlueprintCallable)
+	void AttachWeaponToBack();
 
 	UFUNCTION(BlueprintCallable)
-	void Disarm();
-
-	UFUNCTION(BlueprintCallable)
-	void Arm();
+	void AttachWeaponToHand();
 
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
 	
 private:
+
+	/** Character components */
+	
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
@@ -110,18 +99,12 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EActionState ActionState = EActionState::EAS_Unoccupied;
-
-	EAttackComboState AttackComboState = EAttackComboState::EACS_1;
-
-	/**
-	 * Animation Montages
-	 **/
 	
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
 	
 public:
+	
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
-
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 };

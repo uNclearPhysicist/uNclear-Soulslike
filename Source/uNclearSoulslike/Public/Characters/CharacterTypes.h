@@ -17,14 +17,6 @@ enum class EActionState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EAttackComboState : uint8
-{
-	EACS_1 UMETA(DisplayName = "Attack Combo 1"),
-	EACS_2 UMETA(DisplayName = "Attack Combo 2"),
-	EACS_3 UMETA(DisplayName = "Attack Combo 3")
-};
-
-UENUM(BlueprintType)
 enum EDeathPose
 {
 	EDP_Death1 UMETA(DisplayName = "Death1"),
