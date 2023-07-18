@@ -134,6 +134,8 @@ void AuNclearCharacter::EKeyPressed()
 
 void AuNclearCharacter::Attack()
 {
+	Super::Attack();
+	
 	if (CanAttack())
 	{
 		PlayAttackMontage();
@@ -143,6 +145,8 @@ void AuNclearCharacter::Attack()
 
 void AuNclearCharacter::PlayAttackMontage()
 {
+	Super::PlayAttackMontage();
+	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage)
 	{

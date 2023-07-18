@@ -50,6 +50,10 @@ protected:
 	
 	AActor* ChoosePatrolTarget();
 
+	virtual void Attack() override;
+	
+	virtual void PlayAttackMontage() override;
+
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
 
