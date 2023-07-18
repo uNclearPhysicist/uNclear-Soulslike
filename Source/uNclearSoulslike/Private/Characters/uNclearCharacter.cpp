@@ -64,6 +64,9 @@ void AuNclearCharacter::BeginPlay()
 			Subsystem->AddMappingContext(uNclearCharacterContext, 0);
 		}
 	}
+
+	// Tag for Enemy Pawn Sensing
+	Tags.Add(FName("uNclearCharacter"));
 }
 
 void AuNclearCharacter::Movement(const FInputActionValue& Value)
