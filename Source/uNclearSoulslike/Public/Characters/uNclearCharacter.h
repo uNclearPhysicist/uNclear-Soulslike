@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "uNclearCharacter.generated.h"
 
@@ -12,13 +12,12 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
-class AWeapon;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class UNCLEARSOULSLIKE_API AuNclearCharacter : public ACharacter
+class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -31,9 +30,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 	
 protected:
 	// Called when the game starts or when spawned
@@ -73,19 +69,18 @@ protected:
 
 	void EKeyPressed();
 
-	void Attack();
-
+	virtual void Attack() override;
+	
 	/** 
 	* Play montage functions
 	**/
-	
-	void PlayAttackMontage();
 
-	UFUNCTION(BlueprintCallable)
-	void AttackEnd();
+	virtual void PlayAttackMontage() override;
 	
-	bool CanAttack();
-
+	virtual void AttackEnd() override;
+	
+	virtual bool CanAttack() override;
+	
 	void PlayEquipMontage(const FName& SectionName);
 	
 	bool CanDisarm();
@@ -116,23 +111,17 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
-
+	
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EActionState ActionState = EActionState::EAS_Unoccupied;
-
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	AWeapon* EquippedWeapon;
 
 	EAttackComboState AttackComboState = EAttackComboState::EACS_1;
 
 	/**
 	 * Animation Montages
 	 **/
-
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* AttackMontage;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
