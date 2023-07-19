@@ -9,6 +9,7 @@
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -46,6 +47,13 @@ AuNclearCharacter::AuNclearCharacter()
 	// Orient Character Rotation to Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
+
+	// Configure Collision Settings
+	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 void AuNclearCharacter::BeginPlay()
@@ -62,7 +70,7 @@ void AuNclearCharacter::BeginPlay()
 	}
 
 	// Tag for Enemy Pawn Sensing
-	Tags.Add(FName("uNclearCharacter"));
+	Tags.Add(FName("EngageableTarget"));
 }
 
 void AuNclearCharacter::Movement(const FInputActionValue& Value)
@@ -222,4 +230,10 @@ void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(EKeyAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::EKeyPressed);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::Attack);
 	}
+}
+
+void AuNclearCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	PlayHitSound(ImpactPoint);
+	SpawnHitParticles(ImpactPoint);
 }
