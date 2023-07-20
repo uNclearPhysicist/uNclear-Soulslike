@@ -9,17 +9,15 @@
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
-#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 
-// Sets default values
 AuNclearCharacter::AuNclearCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Set up Spring Arm Component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -49,9 +47,15 @@ AuNclearCharacter::AuNclearCharacter()
 	// Orient Character Rotation to Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
+
+	// Configure Collision Settings
+	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
-// Called when the game starts or when spawned
 void AuNclearCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -64,6 +68,9 @@ void AuNclearCharacter::BeginPlay()
 			Subsystem->AddMappingContext(uNclearCharacterContext, 0);
 		}
 	}
+
+	// Tag for Enemy Pawn Sensing
+	Tags.Add(FName("EngageableTarget"));
 }
 
 void AuNclearCharacter::Movement(const FInputActionValue& Value)
@@ -108,60 +115,29 @@ void AuNclearCharacter::EKeyPressed()
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon)
 	{
-		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
-		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-		OverlappingItem = nullptr;
-		EquippedWeapon = OverlappingWeapon;
+		EquipWeapon(OverlappingWeapon);
 	}
 	else
 	{
 		if (CanDisarm())
 		{
-			PlayEquipMontage(FName("Unequip"));
-			CharacterState = ECharacterState::ECS_Unequipped;
-			ActionState = EActionState::EAS_EquippingWeapon;
+			Disarm();
 		}
 		else if (CanArm())
 		{
-			PlayEquipMontage(FName("Equip"));
-			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-			ActionState = EActionState::EAS_EquippingWeapon;
+			Arm();
 		}
 	}
 }
 
 void AuNclearCharacter::Attack()
 {
+	Super::Attack();
+	
 	if (CanAttack())
 	{
 		PlayAttackMontage();
 		ActionState = EActionState::EAS_Attacking;
-	}
-}
-
-void AuNclearCharacter::PlayAttackMontage()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && AttackMontage)
-	{
-		AnimInstance->Montage_Play(AttackMontage);
-		FName SectionName = FName();
-		if (AttackComboState == EAttackComboState::EACS_1)
-		{
-			SectionName = FName("Attack1");
-			AttackComboState = EAttackComboState::EACS_2;
-		}
-		else if (AttackComboState == EAttackComboState::EACS_2)
-		{
-			SectionName = FName("Attack2");
-			AttackComboState = EAttackComboState::EACS_3;
-		}
-		else if (AttackComboState == EAttackComboState::EACS_3)
-		{
-			SectionName = FName("Attack3");
-			AttackComboState = EAttackComboState::EACS_1;
-		}
-		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
 
@@ -174,6 +150,14 @@ bool AuNclearCharacter::CanAttack()
 {
 	return ActionState == EActionState::EAS_Unoccupied &&
 		CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+void AuNclearCharacter::EquipWeapon(AWeapon* Weapon)
+{
+	Weapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
+	CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	OverlappingItem = nullptr;
+	EquippedWeapon = Weapon;
 }
 
 void AuNclearCharacter::PlayEquipMontage(const FName& SectionName)
@@ -201,13 +185,27 @@ bool AuNclearCharacter::CanArm()
 
 void AuNclearCharacter::Disarm()
 {
+	PlayEquipMontage(FName("Unequip"));
+	CharacterState = ECharacterState::ECS_Unequipped;
+	ActionState = EActionState::EAS_EquippingWeapon;
+}
+
+void AuNclearCharacter::Arm()
+{
+	PlayEquipMontage(FName("Equip"));
+	CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	ActionState = EActionState::EAS_EquippingWeapon;
+}
+
+void AuNclearCharacter::AttachWeaponToBack()
+{
 	if (EquippedWeapon)
 	{
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
 	}
 }
 
-void AuNclearCharacter::Arm()
+void AuNclearCharacter::AttachWeaponToHand()
 {
 	if (EquippedWeapon)
 	{
@@ -220,14 +218,11 @@ void AuNclearCharacter::FinishEquipping()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
-// Called every frame
-void AuNclearCharacter::Tick(float DeltaTime)
+void AuNclearCharacter::HitReactEnd()
 {
-	Super::Tick(DeltaTime);
-
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
-// Called to bind functionality to input
 void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -242,11 +237,9 @@ void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	}
 }
 
-void AuNclearCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
+void AuNclearCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-		EquippedWeapon->IgnoreActors.Empty();
-	}
+	Super::GetHit_Implementation(ImpactPoint, Hitter);
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
+	ActionState = EActionState::EAS_HitReaction;
 }
