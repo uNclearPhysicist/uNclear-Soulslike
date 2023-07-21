@@ -27,4 +27,8 @@ private:
 
 	UPROPERTY()
 	UuNclearOverlay* uNclearOverlay;
+
+public:
+	
+	FORCEINLINE UuNclearOverlay* GetuNclearOverlay() const { return uNclearOverlay; }
 };

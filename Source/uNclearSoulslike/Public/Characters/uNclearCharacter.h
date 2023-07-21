@@ -12,6 +12,7 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
+class UuNclearOverlay;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -83,6 +84,8 @@ protected:
 	
 private:
 
+	void InitializeuNclearOverlay();
+
 	/** Character components */
 	
 	UPROPERTY(VisibleAnywhere)
@@ -107,6 +110,9 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
+
+	UPROPERTY()
+	UuNclearOverlay* uNclearOverlay;
 	
 public:
 	

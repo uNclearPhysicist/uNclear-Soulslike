@@ -10,6 +10,9 @@
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/AttributeComponent.h"
+#include "HUD/uNclearHUD.h"
+#include "HUD/uNclearOverlay.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -71,6 +74,8 @@ void AuNclearCharacter::BeginPlay()
 
 	// Tag for Enemy Pawn Sensing
 	Tags.Add(FName("EngageableTarget"));
+
+	InitializeuNclearOverlay();
 }
 
 void AuNclearCharacter::Movement(const FInputActionValue& Value)
@@ -221,6 +226,26 @@ void AuNclearCharacter::FinishEquipping()
 void AuNclearCharacter::HitReactEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void AuNclearCharacter::InitializeuNclearOverlay()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		AuNclearHUD* uNclearHUD = Cast<AuNclearHUD>(PlayerController->GetHUD());
+		if (uNclearHUD)
+		{
+			uNclearOverlay = uNclearHUD->GetuNclearOverlay();
+			if (uNclearOverlay && Attributes)
+			{
+				uNclearOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+				uNclearOverlay->SetStaminaBarPercent(1.f);
+				uNclearOverlay->SetGold(0);
+				uNclearOverlay->SetSouls(0);
+			}
+		}
+	}
 }
 
 void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
