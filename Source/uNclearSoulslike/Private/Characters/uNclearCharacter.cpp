@@ -175,6 +175,14 @@ void AuNclearCharacter::PlayEquipMontage(const FName& SectionName)
 	}
 }
 
+void AuNclearCharacter::Die()
+{
+	Super::Die();
+
+	ActionState = EActionState::EAS_Dead;
+	DisableMeshCollision();
+}
+
 bool AuNclearCharacter::CanDisarm()
 {
 	return ActionState == EActionState::EAS_Unoccupied && 
@@ -279,7 +287,10 @@ void AuNclearCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor
 {
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
-	ActionState = EActionState::EAS_HitReaction;
+	if (Attributes && Attributes->GetHealthPercent() > 0.f)
+	{
+		ActionState = EActionState::EAS_HitReaction;
+	}
 }
 
 float AuNclearCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
