@@ -85,6 +85,8 @@ protected:
 private:
 
 	void InitializeuNclearOverlay();
+	bool IsUnoccupied();
+	void SetHUDHealth();
 
 	/** Character components */
 	

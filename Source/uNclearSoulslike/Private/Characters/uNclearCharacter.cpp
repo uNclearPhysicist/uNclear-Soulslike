@@ -111,7 +111,7 @@ void AuNclearCharacter::Looking(const FInputActionValue& Value)
 
 void AuNclearCharacter::Jump()
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (!IsUnoccupied()) return;
 	Super::Jump();
 }
 
@@ -248,6 +248,19 @@ void AuNclearCharacter::InitializeuNclearOverlay()
 	}
 }
 
+bool AuNclearCharacter::IsUnoccupied()
+{
+	return ActionState == EActionState::EAS_Unoccupied;
+}
+
+void AuNclearCharacter::SetHUDHealth()
+{
+	if (uNclearOverlay && Attributes)
+	{
+		uNclearOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+	}
+}
+
 void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -273,5 +286,6 @@ float AuNclearCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	AActor* DamageCauser)
 {
 	HandleDamage(DamageAmount);
+	SetHUDHealth();
 	return DamageAmount;
 }
