@@ -4,7 +4,7 @@
 #include "Items/Item.h"
 #include "uNclearSoulslike/DebugMacros.h"
 #include "Components/SphereComponent.h"
-#include "Characters/uNclearCharacter.h"
+#include "Interfaces/PickupInterface.h"
 #include "NiagaraComponent.h"
 
 // Sets default values
@@ -52,10 +52,10 @@ void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Set this Item as the Overlapping Item for the uNclear Character
-	AuNclearCharacter* uNclearCharacter = Cast<AuNclearCharacter>(OtherActor);
-	if (uNclearCharacter)
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
+	if (PickupInterface)
 	{
-		uNclearCharacter->SetOverlappingItem(this);
+		PickupInterface->SetOverlappingItem(this);
 	}
 }
 
@@ -63,10 +63,10 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	// Unset this Item as the Overlapping Item for the uNclear Character
-	AuNclearCharacter* uNclearCharacter = Cast<AuNclearCharacter>(OtherActor);
-	if (uNclearCharacter)
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
+	if (PickupInterface)
 	{
-		uNclearCharacter->SetOverlappingItem(nullptr);
+		PickupInterface->SetOverlappingItem(nullptr);
 	}
 }
 

@@ -300,3 +300,13 @@ float AuNclearCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	SetHUDHealth();
 	return DamageAmount;
 }
+
+void AuNclearCharacter::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+}
+
+void AuNclearCharacter::AddSouls(ASoul* Soul)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ASlashCharacter::AddSouls"));
+}

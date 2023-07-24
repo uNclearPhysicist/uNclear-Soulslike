@@ -5,12 +5,14 @@
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
 #include "CharacterTypes.h"
+#include "Interfaces/PickupInterface.h"
 #include "uNclearCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class ASoul;
 class UAnimMontage;
 class UuNclearOverlay;
 class UInputMappingContext;
@@ -18,7 +20,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter
+class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter, public IPickupInterface
 {
 	GENERATED_BODY()
 
@@ -28,6 +30,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void SetOverlappingItem(AItem* Item) override;
+	virtual void AddSouls(ASoul* Soul) override;
 	
 protected:
 	
@@ -119,7 +123,6 @@ private:
 	
 public:
 	
-	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 	FORCEINLINE EActionState GetActionState() const { return ActionState; }
 };
