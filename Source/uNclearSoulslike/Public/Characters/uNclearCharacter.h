@@ -13,6 +13,7 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class ASoul;
+class ATreasure;
 class UAnimMontage;
 class UuNclearOverlay;
 class UInputMappingContext;
@@ -32,6 +33,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void SetOverlappingItem(AItem* Item) override;
 	virtual void AddSouls(ASoul* Soul) override;
+	virtual void AddGold(ATreasure* Treasure) override;
 	
 protected:
 	

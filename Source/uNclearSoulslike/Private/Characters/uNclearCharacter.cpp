@@ -13,6 +13,8 @@
 #include "Components/AttributeComponent.h"
 #include "HUD/uNclearHUD.h"
 #include "HUD/uNclearOverlay.h"
+#include "Items/Soul.h"
+#include "Items/Treasure.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -308,5 +310,18 @@ void AuNclearCharacter::SetOverlappingItem(AItem* Item)
 
 void AuNclearCharacter::AddSouls(ASoul* Soul)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASlashCharacter::AddSouls"));
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->AddSouls(Soul->GetSouls());
+		uNclearOverlay->SetSouls(Attributes->GetSouls());
+	}
+}
+
+void AuNclearCharacter::AddGold(ATreasure* Treasure)
+{
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->AddGold(Treasure->GetGold());
+		uNclearOverlay->SetGold(Attributes->GetGold());
+	}
 }
