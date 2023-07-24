@@ -3,21 +3,13 @@
 
 #include "Items/Treasure.h"
 #include "Characters/uNclearCharacter.h"
-#include "Kismet/GameplayStatics.h"
 
 void ATreasure::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AuNclearCharacter* uNclearCharacter = Cast<AuNclearCharacter>(OtherActor);
 	if (uNclearCharacter)
 	{
-		if (PickupSound)
-		{
-			UGameplayStatics::PlaySoundAtLocation(
-				this,
-				PickupSound,
-				GetActorLocation()
-			);
-		}
+		SpawnPickupSound();
 		Destroy();
 	}
 }
