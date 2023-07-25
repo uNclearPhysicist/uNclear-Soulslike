@@ -59,16 +59,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* DodgeAction;
+
 	/** Callbacks for input */
 	void Movement(const FInputActionValue& Value);
 	void Looking(const FInputActionValue& Value);
 	virtual void Jump() override;
 	void EKeyPressed();
 	virtual void Attack() override;
+	void Dodge();
 	
 	/** Combat */
 	void EquipWeapon(AWeapon* Weapon);
 	virtual void AttackEnd() override;
+	virtual void DodgeEnd() override;
 	virtual bool CanAttack() override;
 	bool CanDisarm();
 	bool CanArm();
