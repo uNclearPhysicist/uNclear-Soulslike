@@ -10,6 +10,11 @@
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/AttributeComponent.h"
+#include "HUD/uNclearHUD.h"
+#include "HUD/uNclearOverlay.h"
+#include "Items/Soul.h"
+#include "Items/Treasure.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -17,7 +22,7 @@
 
 AuNclearCharacter::AuNclearCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Set up Spring Arm Component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -56,6 +61,15 @@ AuNclearCharacter::AuNclearCharacter()
 	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
+void AuNclearCharacter::Tick(float DeltaTime)
+{
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->RegenStamina(DeltaTime);
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
+}
+
 void AuNclearCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -71,6 +85,8 @@ void AuNclearCharacter::BeginPlay()
 
 	// Tag for Enemy Pawn Sensing
 	Tags.Add(FName("EngageableTarget"));
+
+	InitializeuNclearOverlay();
 }
 
 void AuNclearCharacter::Movement(const FInputActionValue& Value)
@@ -106,8 +122,13 @@ void AuNclearCharacter::Looking(const FInputActionValue& Value)
 
 void AuNclearCharacter::Jump()
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (IsOccupied() || !HasEnoughStamina(Attributes->GetJumpCost())) return;
 	Super::Jump();
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->UseStamina(Attributes->GetJumpCost());
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
 }
 
 void AuNclearCharacter::EKeyPressed()
@@ -115,6 +136,10 @@ void AuNclearCharacter::EKeyPressed()
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon)
 	{
+		if (EquippedWeapon)
+		{
+			EquippedWeapon->Destroy();
+		}
 		EquipWeapon(OverlappingWeapon);
 	}
 	else
@@ -134,15 +159,37 @@ void AuNclearCharacter::Attack()
 {
 	Super::Attack();
 	
-	if (CanAttack())
+	if (!CanAttack() || !HasEnoughStamina(Attributes->GetAttackCost())) return;
+	PlayAttackMontage();
+	ActionState = EActionState::EAS_Attacking;
+	if (Attributes && uNclearOverlay)
 	{
-		PlayAttackMontage();
-		ActionState = EActionState::EAS_Attacking;
+		Attributes->UseStamina(Attributes->GetAttackCost());
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
+}
+
+void AuNclearCharacter::Dodge()
+{
+	if (IsOccupied() || !HasEnoughStamina(Attributes->GetDodgeCost())) return;
+	PlayDodgeMontage();
+	ActionState = EActionState::EAS_Dodging;
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->UseStamina(Attributes->GetDodgeCost());
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
 	}
 }
 
 void AuNclearCharacter::AttackEnd()
 {
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void AuNclearCharacter::DodgeEnd()
+{
+	Super::DodgeEnd();
+
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
@@ -168,6 +215,19 @@ void AuNclearCharacter::PlayEquipMontage(const FName& SectionName)
 		AnimInstance->Montage_Play(EquipMontage);
 		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
 	}
+}
+
+void AuNclearCharacter::Die()
+{
+	Super::Die();
+
+	ActionState = EActionState::EAS_Dead;
+	DisableMeshCollision();
+}
+
+bool AuNclearCharacter::HasEnoughStamina(const float ActionCost)
+{
+	return Attributes && Attributes->GetStamina() > ActionCost;
 }
 
 bool AuNclearCharacter::CanDisarm()
@@ -197,6 +257,11 @@ void AuNclearCharacter::Arm()
 	ActionState = EActionState::EAS_EquippingWeapon;
 }
 
+bool AuNclearCharacter::IsOccupied()
+{
+	return ActionState != EActionState::EAS_Unoccupied;
+}
+
 void AuNclearCharacter::AttachWeaponToBack()
 {
 	if (EquippedWeapon)
@@ -223,6 +288,39 @@ void AuNclearCharacter::HitReactEnd()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
+void AuNclearCharacter::InitializeuNclearOverlay()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		AuNclearHUD* uNclearHUD = Cast<AuNclearHUD>(PlayerController->GetHUD());
+		if (uNclearHUD)
+		{
+			uNclearOverlay = uNclearHUD->GetuNclearOverlay();
+			if (uNclearOverlay && Attributes)
+			{
+				uNclearOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+				uNclearOverlay->SetStaminaBarPercent(1.f);
+				uNclearOverlay->SetGold(0);
+				uNclearOverlay->SetSouls(0);
+			}
+		}
+	}
+}
+
+bool AuNclearCharacter::IsUnoccupied()
+{
+	return ActionState == EActionState::EAS_Unoccupied;
+}
+
+void AuNclearCharacter::SetHUDHealth()
+{
+	if (uNclearOverlay && Attributes)
+	{
+		uNclearOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+	}
+}
+
 void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -234,6 +332,7 @@ void AuNclearCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::Jump);
 		EnhancedInputComponent->BindAction(EKeyAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::EKeyPressed);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::Attack);
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AuNclearCharacter::Dodge);
 	}
 }
 
@@ -241,5 +340,39 @@ void AuNclearCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor
 {
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
-	ActionState = EActionState::EAS_HitReaction;
+	if (Attributes && Attributes->GetHealthPercent() > 0.f)
+	{
+		ActionState = EActionState::EAS_HitReaction;
+	}
+}
+
+float AuNclearCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	HandleDamage(DamageAmount);
+	SetHUDHealth();
+	return DamageAmount;
+}
+
+void AuNclearCharacter::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+}
+
+void AuNclearCharacter::AddSouls(ASoul* Soul)
+{
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->AddSouls(Soul->GetSouls());
+		uNclearOverlay->SetSouls(Attributes->GetSouls());
+	}
+}
+
+void AuNclearCharacter::AddGold(ATreasure* Treasure)
+{
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->AddGold(Treasure->GetGold());
+		uNclearOverlay->SetGold(Attributes->GetGold());
+	}
 }

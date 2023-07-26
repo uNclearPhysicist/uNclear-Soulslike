@@ -5,27 +5,36 @@
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
 #include "CharacterTypes.h"
+#include "Interfaces/PickupInterface.h"
 #include "uNclearCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class ASoul;
+class ATreasure;
 class UAnimMontage;
+class UuNclearOverlay;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter
+class UNCLEARSOULSLIKE_API AuNclearCharacter : public ABaseCharacter, public IPickupInterface
 {
 	GENERATED_BODY()
 
 public:
 	
 	AuNclearCharacter();
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void SetOverlappingItem(AItem* Item) override;
+	virtual void AddSouls(ASoul* Soul) override;
+	virtual void AddGold(ATreasure* Treasure) override;
 	
 protected:
 	
@@ -51,22 +60,30 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* DodgeAction;
+
 	/** Callbacks for input */
 	void Movement(const FInputActionValue& Value);
 	void Looking(const FInputActionValue& Value);
 	virtual void Jump() override;
 	void EKeyPressed();
 	virtual void Attack() override;
+	void Dodge();
 	
 	/** Combat */
 	void EquipWeapon(AWeapon* Weapon);
 	virtual void AttackEnd() override;
+	virtual void DodgeEnd() override;
 	virtual bool CanAttack() override;
 	bool CanDisarm();
 	bool CanArm();
 	void Disarm();
 	void Arm();
 	void PlayEquipMontage(const FName& SectionName);
+	virtual void Die() override;
+	bool HasEnoughStamina(const float ActionCost);
+	bool IsOccupied();
 	
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToBack();
@@ -81,6 +98,10 @@ protected:
 	void HitReactEnd();
 	
 private:
+
+	void InitializeuNclearOverlay();
+	bool IsUnoccupied();
+	void SetHUDHealth();
 
 	/** Character components */
 	
@@ -106,9 +127,12 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
+
+	UPROPERTY()
+	UuNclearOverlay* uNclearOverlay;
 	
 public:
 	
-	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
+	FORCEINLINE EActionState GetActionState() const { return ActionState; }
 };
