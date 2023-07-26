@@ -22,7 +22,7 @@
 
 AuNclearCharacter::AuNclearCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Set up Spring Arm Component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -59,6 +59,15 @@ AuNclearCharacter::AuNclearCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
+}
+
+void AuNclearCharacter::Tick(float DeltaTime)
+{
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->RegenStamina(DeltaTime);
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
 }
 
 void AuNclearCharacter::BeginPlay()
@@ -113,8 +122,13 @@ void AuNclearCharacter::Looking(const FInputActionValue& Value)
 
 void AuNclearCharacter::Jump()
 {
-	if (!IsUnoccupied()) return;
+	if (IsOccupied() || !HasEnoughStamina(Attributes->GetJumpCost())) return;
 	Super::Jump();
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->UseStamina(Attributes->GetJumpCost());
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
 }
 
 void AuNclearCharacter::EKeyPressed()
@@ -141,18 +155,26 @@ void AuNclearCharacter::Attack()
 {
 	Super::Attack();
 	
-	if (CanAttack())
+	if (!CanAttack() || !HasEnoughStamina(Attributes->GetAttackCost())) return;
+	PlayAttackMontage();
+	ActionState = EActionState::EAS_Attacking;
+	if (Attributes && uNclearOverlay)
 	{
-		PlayAttackMontage();
-		ActionState = EActionState::EAS_Attacking;
+		Attributes->UseStamina(Attributes->GetAttackCost());
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
 	}
 }
 
 void AuNclearCharacter::Dodge()
 {
-	if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (IsOccupied() || !HasEnoughStamina(Attributes->GetDodgeCost())) return;
 	PlayDodgeMontage();
 	ActionState = EActionState::EAS_Dodging;
+	if (Attributes && uNclearOverlay)
+	{
+		Attributes->UseStamina(Attributes->GetDodgeCost());
+		uNclearOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
 }
 
 void AuNclearCharacter::AttackEnd()
@@ -199,6 +221,11 @@ void AuNclearCharacter::Die()
 	DisableMeshCollision();
 }
 
+bool AuNclearCharacter::HasEnoughStamina(const float ActionCost)
+{
+	return Attributes && Attributes->GetStamina() > ActionCost;
+}
+
 bool AuNclearCharacter::CanDisarm()
 {
 	return ActionState == EActionState::EAS_Unoccupied && 
@@ -224,6 +251,11 @@ void AuNclearCharacter::Arm()
 	PlayEquipMontage(FName("Equip"));
 	CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 	ActionState = EActionState::EAS_EquippingWeapon;
+}
+
+bool AuNclearCharacter::IsOccupied()
+{
+	return ActionState != EActionState::EAS_Unoccupied;
 }
 
 void AuNclearCharacter::AttachWeaponToBack()

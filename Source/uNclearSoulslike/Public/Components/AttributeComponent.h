@@ -19,14 +19,13 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void ReceiveDamage(float Damage);
-	
+	void UseStamina(float StaminaCost);
 	float GetHealthPercent();
-	
+	float GetStaminaPercent();
 	bool IsAlive();
-	
 	void AddSouls(int32 NumberOfSouls);
-	
 	void AddGold(int32 AmountOfGold);
+	void RegenStamina(float DeltaTime);
 
 protected:
 
@@ -35,10 +34,17 @@ protected:
 private:
 	// Current Health
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	float Health;
+	float Health = 100.f;
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	float MaxHealth;
+	float MaxHealth = 100.f;
+
+	// Current Stamina
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
+	float Stamina = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
+	float MaxStamina = 100.f;
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	int32 Gold;
@@ -46,8 +52,24 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	int32 Souls;
 
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
+	float StaminaRegenRate = 5.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
+	float DodgeCost = 15.f;
+
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
+	float AttackCost = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
+	float JumpCost = 15.f;
+
 public:
 	
 	FORCEINLINE int32 GetGold() const { return Gold; }
 	FORCEINLINE int32 GetSouls() const { return Souls; }
+	FORCEINLINE float GetStamina() const { return Stamina; }
+	FORCEINLINE float GetDodgeCost() const { return DodgeCost; }
+	FORCEINLINE float GetAttackCost() const { return AttackCost; }
+	FORCEINLINE float GetJumpCost() const { return JumpCost; }
 };
